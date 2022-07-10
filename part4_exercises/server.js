@@ -22,11 +22,33 @@ const data = [
       "id": 4,
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
+    },
+    { 
+      "id": 5,
+      "name": "Jeap Pierre Baptiste", 
+      "number": "42-12-235564"
     }
 ]
 
 app.get("/api/persons", (req,res)=>{
     res.json(data);
+})
+
+function dataIdCounter(data) {
+  let count = 0;
+  data.map(item=> {
+      if(item["id"]) count++
+    })
+  return count;
+}
+
+const dateLog = ()=>{
+  console.log('called')
+  return new Date().toUTCString();
+}
+
+app.get("/info", (req,res)=>{
+  res.send(`<p>Phonebook has info for ${dataIdCounter(data)} people</p>\n\n<p>${dateLog()}</p>`);
 })
 
 app.listen(PORT, ()=>{
