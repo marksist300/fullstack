@@ -30,11 +30,15 @@ const data = [
       "number": "42-12-235564"
     }
 ]
+//app.use command, needed for the  later post requests in json format
 app.use(express.json())
+
+//basic get request to output json data back to the user:
 app.get("/api/persons", (req,res)=>{
     res.json(data);
 })
 
+//function to count the number of ids and therefore people in the data set.
 function dataIdCounter(data) {
   let count = 0;
   data.map(item=> {
@@ -46,11 +50,13 @@ function dataIdCounter(data) {
 const dateLog = ()=>{
   return new Date().toUTCString();
 }
-
+//out puts data about the overall size of the phonebook using the above functions.
 app.get("/info", (req,res)=>{
   res.send(`<p>Phonebook has info for ${dataIdCounter(data)} people</p>\n\n<p>${dateLog()}</p>`);
 })
 
+
+//takes request paramaters from the user and searches through the data to match to a person.
 app.get("/api/persons/:num", (req, res)=>{
   let idNum = req.params.num;
   if(!data.find(item=> item["id"] ==idNum)){
@@ -61,6 +67,8 @@ app.get("/api/persons/:num", (req, res)=>{
   }
 })
 
+
+// Delete request
 app.delete("/api/delete/persons/:num", (req,res)=>{
   let idNum = req.params.num;
   if(!data.find(item=> item["id"] == idNum)){
@@ -75,6 +83,8 @@ app.delete("/api/delete/persons/:num", (req,res)=>{
   }
 })
 
+//functions to be utilised in the API post request. The Math.random id genertaor created in line with the project outlines/instructions
+// there are definitely better and more elegant ways of dealing with the id structure.
 function generateId(min=5, max = 2000){
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -83,9 +93,7 @@ function generateId(min=5, max = 2000){
 
 function checkName(newName){
   if(data.find(person=> person.name == newName) != undefined) return true
-
 }
-console.log(checkName('Jean Pierre Baptiste'))
 
 app.post("/api/persons", (req,res)=>{
   const person = req.body;
