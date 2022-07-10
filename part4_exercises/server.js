@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
-const body = require("body-parser")
+const body = require("body-parser");
 const PORT = 3001;
+const morgan = require("morgan");
 
 const data = [
     { 
@@ -30,9 +31,16 @@ const data = [
       "number": "42-12-235564"
     }
 ]
-//app.use command, needed for the  later post requests in json format
-app.use(express.json())
+//app.use command, needed for the later post requests in json format and middleware use
+app.use(express.json());
 
+// app.use(morgan("tiny"));
+//Setting up morgan 'token' to output the post data when sent
+morgan.token('postBody', (req,res)=>{
+  return JSON.stringify(req.body);
+})
+//outputting various data about the post request as well as finally the token containing the actual data sent to the server.
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postBody'))
 //basic get request to output json data back to the user:
 app.get("/api/persons", (req,res)=>{
     res.json(data);
@@ -97,9 +105,7 @@ function checkName(newName){
 
 app.post("/api/persons", (req,res)=>{
   const person = req.body;
-  console.log(person)
   if(person.name == '' || person.number == ''){
-    console.log(person.name)
     return res.status(400).json({
       error: "content missing"
     });
